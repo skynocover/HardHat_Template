@@ -76,10 +76,11 @@ module.exports = {
 ```js
 "compile": "npx hardhat compile" // 編譯合約
 "test": "npx hardhat test" // 在記憶體內執行測試
-"local-test": "npx hardhat --network localhost test" // 在localhost執行測試,測試前需要啟動hardhat的node
 "h-node": "npx hardhat node" //啟動hardhat的node
+"local-test": "npx hardhat --network localhost test" // 在localhost執行測試,測試前需要啟動hardhat的node
 "ganache-test": "npx hardhat --network ganache test" // 使用內建的ganache網路測試,不必啟動node
 "deploy": "npx hardhat run scripts/deploy.js" // 使用 --network <network-name> 指定要部署的位置, 部署前要拿掉合約內的console
+"dev-deploy": "npx hardhat run scripts/deploy.ts --network localhost", // 部署在本地的node上
 "verify": "npx hardhat verify" //--network <network-name> 指定要部署的位置
 ```
 
