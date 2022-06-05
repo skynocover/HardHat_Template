@@ -27,6 +27,11 @@
         const balance = await signer.getBalance();
         const convertToEth = 1e18;
 
+        // 另一種取得地址餘額方式
+        const balance1 = await window.provider.getBalance(window.address);
+        // 使用ethers內建的方式轉換單位
+        console.log(ethers.utils.formatEther(balance1));
+
         return balance.toString() / convertToEth;
       };
 
@@ -42,6 +47,19 @@
 
         console.log(response);
       };
+
+      const getBlockEvent = async () => {
+        const block = await provider.getBlockNumber();
+        const transferEvents = await window.Contract.queryFilter("TestEvent", block - 10, block);
+        console.table(transferEvents);
+        return transferEvents;
+      };
+
+      const getBlockChainInfo = async () => {
+        const block = await provider.getBlockNumber();
+        const Info = await provider.getBlock(block);
+        console.log(Info);
+      };
     </script>
   </head>
 
@@ -50,7 +68,7 @@
       <div class=" ">
         <h2 class="text-5xl text-green-600">Heading</h2>
       </div>
-      <div class="bg-gray-200" x-data="{address:'',balance:0,greet:'',greeting:''}">
+      <div class="bg-gray-200" x-data="{address:'',balance:0,greet:'',greeting:'',info:[]}">
         <button
           @click="address=await getAddress()"
           class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4"
@@ -86,6 +104,22 @@
           class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4"
         >
           Greet
+        </button>
+
+        <br />
+        <button
+          @click="events = await getBlockEvent()"
+          class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4"
+        >
+          getBlockEvent
+        </button>
+        <span x-text="JSON.stringify(events)"></span>
+        <br />
+        <button
+          @click="await getBlockChainInfo()"
+          class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4"
+        >
+          getBlockChainInfo
         </button>
       </div>
     </div>
