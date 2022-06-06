@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Static Template</title>
+
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      // Morails 設定
+      const serverUrl = "https://zsvqbf9sfslg.usemoralis.com:2053/server";
+      const appId = "XmpJtc1JA3QW4ScgPE9efydEanj4CUsbN4hcvp88";
+      Moralis.start({ serverUrl, appId });
+
+      const ethers = Moralis.web3Library;
+
+      const login = async () => {
+        let user = Moralis.User.current();
+        if (!user) {
+          user = await Moralis.authenticate();
+        }
+        console.log("logged in user:", user);
+        return user.id;
+      };
+
+      const logOut = async () => {
+        await Moralis.User.logOut();
+      };
+
+      const getStats = async () => {
+        const user = Moralis.User.current();
+        if (user) {
+          getUserTransactions(user);
+        }
+
+        const results = await Moralis.Cloud.run("getAvgGas");
+        console.table(results);
+        return results;
+      };
+
+      const getUserTransactions = async (user) => {
+        // create query
+        const query = new Moralis.Query("EthTransactions");
+        query.equalTo("from_address", user.get("ethAddress"));
+
+        // subscribe to query updates ** add this**
+        const subscription = await query.subscribe();
+        subscription.on("TestEvent", (data) => {
+          console.log("new transaction: ", data);
+        });
+
+        // run query
+        const results = await query.find();
+        console.log("user transactions:", results);
+      };
+
+      const getGreeting = async () => {
+        const greet = await Contract.greet();
+        return greet;
+      };
+
+      const setGreeting = async (input) => {
+        const tx = await Contract.connect(signer).setGreeting(input);
+        const resp = await tx.wait();
+
+        console.log(resp);
+      };
+    </script>
+  </head>
+
+  <body>
+    <div class="py-64 container mx-auto px-6">
+      <div class=" ">
+        <h2 class="text-5xl text-green-600">Heading</h2>
+      </div>
+      <div class="bg-gray-200" x-data="{userId:'',stats:[],greeting:''}">
+        <div class="flex justify-between">
+          <button
+            @click="userId=await login()"
+            class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4"
+          >
+            Login
+          </button>
+          <span x-text="userId"></span>
+
+          <button
+            @click="balance=await logOut()"
+            class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4"
+          >
+            Logout
+          </button>
+        </div>
+
+        <button
+          @click="stats=await getStats()"
+          class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4"
+        >
+          Get Stats
+        </button>
+        <template x-for="stat in stats">
+          <li>
+            <span x-text="stat.objectId + ': '"></span>
+            <span x-text="stat.avgGas"></span>
+          </li>
+        </template>
+        <br />
+        <button
+          @click="$refs.greet.innerText= await getGreeting()"
+          class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4"
+        >
+          Greet
+        </button>
+        <span x-ref="greet"></span>
+
+        <input
+          x-model="greeting"
+          type="text"
+          class="border p-2 w-full mb-2 mt-6"
+          placeholder="Input greeting..."
+        />
+
+        <button
+          @click="setGreeting(greeting)"
+          class="bg-blue-800 text-white px-4 py-2 rounded-lg mt-4"
+        >
+          Set Greeting
+        </button>
+      </div>
+    </div>
+
+    <script type="module">
+      // ethers 設定
+      const contractAddress = "0x28D012a34162bc549e3F1a54D33a0698d75Ae85c";
+
+      window.onload = async () => {
+        if (window.ethereum) {
+          const web3Provider = await Moralis.enableWeb3(); // Get ethers.js web3Provider
+          const gasPrice = await web3Provider.getGasPrice();
+          window.signer = web3Provider.getSigner();
+
+          const response = await fetch("../artifacts/contracts/Greeter.sol/Greeter.json");
+
+          const { abi } = await response.json();
+          const Contract = new ethers.Contract(contractAddress, abi, web3Provider);
+
+          window.Contract = Contract;
+
+          window.Contract.on("TestEvent", (from, inputData) => {
+            console.log({ from, inputData });
+          });
+
+          console.log("web3 loaded");
+        } else {
+          alert("No ETH browser extension detected.");
+        }
+      };
+    </script>
+  </body>
+</html>
