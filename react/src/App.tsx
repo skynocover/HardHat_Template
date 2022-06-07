@@ -1,15 +1,13 @@
 import "./App.css";
 import React from "react";
-
+import { AppContext } from "./AppContext";
 import { Tabs, TabList, TabPanels, Tab, TabPanel, Button, ButtonGroup } from "@chakra-ui/react";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 
 import Func from "./components/Func";
 
-import contractDate from "./contracts/Greeter.sol/Greeter.json";
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-
 function App() {
+  const appCtx = React.useContext(AppContext);
   const {
     authenticate,
     isAuthenticated,
@@ -32,18 +30,14 @@ function App() {
   React.useEffect(() => {
     init();
 
-    const input = contractDate.abi.filter(
-      (item) => item.stateMutability === "view" && item.type === "function",
+    const input = appCtx.contractData.abi.filter(
+      (item: any) => item.stateMutability === "view" && item.type === "function",
     );
-    console.table(input);
-
     setInputFuncs(input);
 
-    const output = contractDate.abi.filter(
-      (item) => item.stateMutability === "nonpayable" && item.type === "function",
+    const output = appCtx.contractData.abi.filter(
+      (item: any) => item.stateMutability !== "view" && item.type === "function",
     );
-    console.table(output);
-
     setOutputFuncs(output);
   }, []);
 
@@ -63,7 +57,7 @@ function App() {
         )}
 
         <Tabs isFitted variant="enclosed">
-          <TabList mb="1em">
+          <TabList>
             <Tab>Read</Tab>
             <Tab>Write</Tab>
           </TabList>

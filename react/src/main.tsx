@@ -10,8 +10,8 @@ import { MoralisProvider } from "react-moralis";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MoralisProvider
-      appId="aHwNCdVyrnCc8TBWQbZg7MjCIxrgTVJBwtuG9VCY"
-      serverUrl="https://mikkvj4grwed.usemoralis.com:2053/server"
+      appId={import.meta.env.VITE_APP_ID}
+      serverUrl={import.meta.env.VITE_SERVER_URL}
     >
       <AppProvider>
         <ChakraProvider>
