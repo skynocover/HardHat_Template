@@ -1,6 +1,6 @@
 import React from "react";
 
-import contractData from "./contracts/DoBook.sol/DoBook.json";
+import contractData from "./artifacts/contracts/DoBook.sol/DoBook.json";
 
 export interface AppContextProps {
   contractData: any;
