@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@biconomy/mexa": "^2.0.32",
     "@chakra-ui/react": "^2.1.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -17,7 +18,8 @@
     "moralis": "^1.8.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "react-moralis": "^1.4.0"
+    "react-moralis": "^1.4.0",
+    "web3": "^1.7.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

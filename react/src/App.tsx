@@ -20,26 +20,24 @@ function App() {
     web3,
   } = useMoralis();
 
-  const init = async () => {
-    await enableWeb3();
-  };
-
-  const [inputFuncs, setInputFuncs] = React.useState([]);
-  const [outputFuncs, setOutputFuncs] = React.useState([]);
+  const [inputFuncs, setInputFuncs] = React.useState<any[]>([]);
+  const [outputFuncs, setOutputFuncs] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-    init();
+    if (appCtx.contractABI.length > 0) {
+      enableWeb3();
 
-    const input = appCtx.contractData.abi.filter(
-      (item: any) => item.stateMutability === "view" && item.type === "function",
-    );
-    setInputFuncs(input);
+      const input = appCtx.contractABI.filter(
+        (item: any) => item.stateMutability === "view" && item.type === "function",
+      );
+      setInputFuncs(input);
 
-    const output = appCtx.contractData.abi.filter(
-      (item: any) => item.stateMutability !== "view" && item.type === "function",
-    );
-    setOutputFuncs(output);
-  }, []);
+      const output = appCtx.contractABI.filter(
+        (item: any) => item.stateMutability !== "view" && item.type === "function",
+      );
+      setOutputFuncs(output);
+    }
+  }, [appCtx.contractABI]);
 
   return (
     <div className="App">

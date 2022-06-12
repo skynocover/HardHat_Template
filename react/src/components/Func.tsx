@@ -22,6 +22,7 @@ const Func = ({ abi }: { abi: func }) => {
   // 兩種結果完全相同
   const { data, error, runContractFunction, isFetching, isLoading } = useWeb3Contract({});
   // const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction();
+  const { user } = useMoralis();
 
   React.useEffect(() => {
     if (error) {
@@ -36,12 +37,21 @@ const Func = ({ abi }: { abi: func }) => {
     }
   }, [data]);
 
-  const formik = useFormik({
+  const formik = useFormik<any>({
     initialValues: {},
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values: any) => {
+      // for biconomy relay setting
+      if (import.meta.env.VITE_BICONOMY_API_KEY && values._newData) {
+        await appCtx.biconomyContract.methods
+          .setStorage(values._newData)
+          .send({ from: user?.get("ethAddress") });
+
+        return;
+      }
+      // You can comment above if you don't want to use relay
+
       const options = {
-        abi: appCtx.contractData.abi,
+        abi: appCtx.contractABI,
         contractAddress: import.meta.env.VITE_CONTRACT_ADDRESS,
         functionName: abi.name,
         params: { ...values },
@@ -59,7 +69,7 @@ const Func = ({ abi }: { abi: func }) => {
 
   return (
     <div className="w-screen my-2">
-      <form className="mx-auto w-8/12" onSubmit={formik.handleSubmit}>
+      <form className="w-8/12 mx-auto" onSubmit={formik.handleSubmit}>
         {abi.inputs.length === 1 ? (
           <Input
             key={0}
@@ -70,7 +80,7 @@ const Func = ({ abi }: { abi: func }) => {
             value={formik.values[abi.inputs[0].name]}
           />
         ) : (
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid gap-4 md:grid-cols-2">
             {abi.inputs.map((item, index) => (
               <Input
                 key={index}
