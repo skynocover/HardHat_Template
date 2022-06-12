@@ -13,7 +13,7 @@
     "ganache-test": "npx hardhat --network ganache test",
     "deploy": "npx hardhat run scripts/deploy.ts",
     "dev-deploy": "npx hardhat run scripts/deploy.ts --network localhost",
-    "verify": "npx hardhat verify",
+    "verify": "npx hardhat run scripts/verify.ts",
     "prettier": "prettier --write 'contracts/**/*.sol'"
   },
   "devDependencies": {
@@ -26,6 +26,7 @@
     "@typechain/ethers-v5": "^7.0.1",
     "@typechain/hardhat": "^2.3.0",
     "@types/chai": "^4.2.21",
+    "@types/inquirer": "^8.2.1",
     "@types/mocha": "^9.0.0",
     "@types/node": "^12.0.0",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
@@ -43,6 +44,7 @@
     "ethers": "^5.6.8",
     "hardhat": "^2.9.7",
     "hardhat-gas-reporter": "^1.0.4",
+    "inquirer": "^8.2.4",
     "prettier": "^2.6.2",
     "prettier-plugin-solidity": "^1.0.0-beta.19",
     "solhint": "^3.3.6",

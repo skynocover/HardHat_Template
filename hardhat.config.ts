@@ -33,7 +33,7 @@ const config: HardhatUserConfig = {
     },
     mumbai: {
       url: process.env.MUMBAI_URL || "",
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      accounts: process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`] : [],
     },
   },
   paths: {
